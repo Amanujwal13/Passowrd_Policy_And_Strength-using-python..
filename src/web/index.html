@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PassShield — Password Policy & Strength Analyzer</title>
+  <meta name="description" content="Interactive cyber-security password policy compliance and strength analyzer based on institutional security rules.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Background Glow & Grid Canvas -->
+  <div class="bg-grid"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="shield-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title-row">
+            <h1>PassShield</h1>
+            <span class="badge badge-accent">v2.0 OOPS Engine</span>
+          </div>
+          <p class="brand-subtitle">Interactive Password Policy & Real-Time Strength Auditor</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-toggle-generator" class="btn btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <circle cx="15.5" cy="8.5" r="1.5"/>
+            <circle cx="15.5" cy="15.5" r="1.5"/>
+            <circle cx="8.5" cy="15.5" r="1.5"/>
+          </svg>
+          Password Generator
+        </button>
+        <button id="btn-copy-report" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+          </svg>
+          Export Report
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="main-layout">
+      <!-- Left Column: Input, Status, Policies -->
+      <section class="analysis-section">
+        <!-- Input Card -->
+        <div class="card card-glow" id="input-card">
+          <div class="input-header">
+            <label for="password-input" class="input-label">
+              <span class="pulse-dot"></span>
+              Inspect Target Password
+            </label>
+            <div class="input-shortcuts">
+              <span class="shortcut-tip">Real-time validation enabled</span>
+            </div>
+          </div>
+
+          <div class="input-container">
+            <div class="input-prefix-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <input 
+              type="password" 
+              id="password-input" 
+              placeholder="Type or paste password to evaluate..."
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Password input"
+              value="Gradious@123"
+            >
+            <div class="input-actions">
+              <button type="button" id="btn-toggle-visibility" class="icon-btn" title="Toggle Visibility" aria-label="Toggle Password Visibility">
+                <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+              <button type="button" id="btn-copy-password" class="icon-btn" title="Copy Password" aria-label="Copy Password">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+              </button>
+              <button type="button" id="btn-clear-password" class="icon-btn" title="Clear Field" aria-label="Clear Field">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Test Presets -->
+          <div class="presets-row">
+            <span class="presets-label">Quick Test Presets:</span>
+            <div class="preset-chips">
+              <button type="button" class="preset-chip" data-pwd="Gradious@123">Gradious@123 (High)</button>
+              <button type="button" class="preset-chip" data-pwd="Ab#1Cd$2">Ab#1Cd$2 (Strong)</button>
+              <button type="button" class="preset-chip" data-pwd="admin1234@A">admin1234@A (Forbidden)</button>
+              <button type="button" class="preset-chip" data-pwd="Pass@1">Pass@1 (Short)</button>
+              <button type="button" class="preset-chip" data-pwd="Qwerty#999999999">Qwerty#99 (Length>14)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acceptance & Strength Banner -->
+        <div class="verdict-grid">
+          <!-- Policy Acceptance Banner -->
+          <div class="card verdict-card" id="acceptance-card">
+            <div class="verdict-icon" id="acceptance-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div class="verdict-body">
+              <div class="verdict-header">
+                <span class="verdict-label">POLICY COMPLIANCE</span>
+                <span class="verdict-badge" id="acceptance-badge">ACCEPTED</span>
+              </div>
+              <p class="verdict-description" id="acceptance-desc">
+                All 5 institutional security requirements are satisfied.
+              </p>
+            </div>
+          </div>
+
+          <!-- Strength Assessment Card -->
+          <div class="card strength-card" id="strength-card">
+            <div class="strength-header">
+              <div>
+                <span class="strength-pretitle">SECURITY TIER</span>
+                <h3 class="strength-title" id="strength-title">Strength is High!</h3>
+              </div>
+              <div class="strength-badge-pill" id="strength-pill">High</div>
+            </div>
+
+            <!-- 4-Segment Animated Meter -->
+            <div class="strength-meter-wrapper">
+              <div class="meter-segments">
+                <div class="segment" id="seg-1" data-label="Weak"></div>
+                <div class="segment" id="seg-2" data-label="Moderate"></div>
+                <div class="segment" id="seg-3" data-label="High"></div>
+                <div class="segment" id="seg-4" data-label="Strong"></div>
+              </div>
+              <div class="meter-labels">
+                <span>Weak</span>
+                <span>Moderate</span>
+                <span>High</span>
+                <span>Strong</span>
+              </div>
+            </div>
+
+            <div class="strength-meta">
+              <div class="meta-item">
+                <span class="meta-title">Entropy</span>
+                <span class="meta-value" id="entropy-value">56.2 bits</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-title">Crack Time (est.)</span>
+                <span class="meta-value" id="crack-time-value">~3,400 Years</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-title">Total Length</span>
+                <span class="meta-value" id="char-count-value">12 chars</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 Core Policy Checklist Grid -->
+        <div class="section-title-row">
+          <h2 class="section-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 11l3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+            Policy Compliance Checklist
+          </h2>
+          <span class="subtitle-hint">Evaluates Policies 1 to 5</span>
+        </div>
+
+        <div class="policy-grid">
+          <!-- Policy 1: Length -->
+          <div class="card policy-card" id="policy-length">
+            <div class="policy-header">
+              <span class="policy-num">Policy 1</span>
+              <span class="policy-status-pill" id="status-length">PASS</span>
+            </div>
+            <h4 class="policy-name">Length: 8 to 14 Characters</h4>
+            <p class="policy-details">Between 8 and 14 characters inclusive.</p>
+            <div class="policy-progress-wrapper">
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="fill-length" style="width: 85%;"></div>
+              </div>
+              <div class="progress-text">
+                <span id="label-length-cur">12 characters</span>
+                <span class="target-range">Target: 8 - 14</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Policy 2a: Uppercase -->
+          <div class="card policy-card" id="policy-upper">
+            <div class="policy-header">
+              <span class="policy-num">Policy 2</span>
+              <span class="policy-status-pill" id="status-upper">PASS</span>
+            </div>
+            <h4 class="policy-name">Uppercase Letters (A-Z)</h4>
+            <p class="policy-details">Contains at least 1 uppercase letter.</p>
+            <div class="policy-metric">
+              <span class="count-badge" id="count-upper">1</span>
+              <span class="count-label">upp_count (min 1 required)</span>
+            </div>
+          </div>
+
+          <!-- Policy 2b: Lowercase -->
+          <div class="card policy-card" id="policy-lower">
+            <div class="policy-header">
+              <span class="policy-num">Policy 2</span>
+              <span class="policy-status-pill" id="status-lower">PASS</span>
+            </div>
+            <h4 class="policy-name">Lowercase Letters (a-z)</h4>
+            <p class="policy-details">Contains at least 1 lowercase letter.</p>
+            <div class="policy-metric">
+              <span class="count-badge" id="count-lower">7</span>
+              <span class="count-label">low_count (min 1 required)</span>
+            </div>
+          </div>
+
+          <!-- Policy 3: Digits -->
+          <div class="card policy-card" id="policy-digit">
+            <div class="policy-header">
+              <span class="policy-num">Policy 3</span>
+              <span class="policy-status-pill" id="status-digit">PASS</span>
+            </div>
+            <h4 class="policy-name">Numerical Digits (0-9)</h4>
+            <p class="policy-details">Contains one or more numerical digits.</p>
+            <div class="policy-metric">
+              <span class="count-badge" id="count-digit">3</span>
+              <span class="count-label">dig_count (min 1 required)</span>
+            </div>
+          </div>
+
+          <!-- Policy 4: Special Characters -->
+          <div class="card policy-card" id="policy-spec">
+            <div class="policy-header">
+              <span class="policy-num">Policy 4</span>
+              <span class="policy-status-pill" id="status-spec">PASS</span>
+            </div>
+            <h4 class="policy-name">Special Characters</h4>
+            <p class="policy-details">Must contain special characters (@, #, $, %, ^, &, *, ! ...)</p>
+            <div class="policy-metric">
+              <span class="count-badge" id="count-spec">1</span>
+              <span class="count-label">spec_count (min 1 required)</span>
+            </div>
+            <div class="matched-chars-preview" id="matched-spec-preview">
+              Matched: <code id="spec-matched-chars">@</code>
+            </div>
+          </div>
+
+          <!-- Policy 5: Forbidden Words -->
+          <div class="card policy-card" id="policy-forbidden">
+            <div class="policy-header">
+              <span class="policy-num">Policy 5</span>
+              <span class="policy-status-pill" id="status-forbidden">PASS</span>
+            </div>
+            <h4 class="policy-name">No Forbidden Words</h4>
+            <p class="policy-details">Excludes: "password", "12345", "qwerty", "admin", "username"</p>
+            <div class="forbidden-alert" id="forbidden-alert">
+              <span class="clean-tag" id="forbidden-clean-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                No forbidden words detected
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Strength Matrix, Terminal Output & Generator -->
+      <aside class="sidebar-section">
+        <!-- Interactive Generator Card -->
+        <div class="card generator-card" id="generator-card">
+          <div class="generator-header">
+            <div class="generator-title-row">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              <h3>Policy-Compliant Generator</h3>
+            </div>
+            <span class="gen-badge">1-Click</span>
+          </div>
+
+          <div class="generator-controls">
+            <div class="slider-row">
+              <div class="slider-label-row">
+                <label for="gen-length">Length: <strong id="gen-length-val">12</strong></label>
+                <span class="range-hint">Allowed: 8 - 14</span>
+              </div>
+              <input type="range" id="gen-length" min="8" max="14" value="12">
+            </div>
+
+            <div class="gen-options">
+              <label class="checkbox-label">
+                <input type="checkbox" id="gen-opt-upper" checked disabled>
+                <span>Uppercase (A-Z)</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="gen-opt-lower" checked disabled>
+                <span>Lowercase (a-z)</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="gen-opt-digit" checked disabled>
+                <span>Digits (0-9)</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="gen-opt-spec" checked disabled>
+                <span>Special (@#$%^&*!)</span>
+              </label>
+            </div>
+
+            <div class="generator-tier-select">
+              <label class="select-label">Target Tier:</label>
+              <div class="tier-radio-group">
+                <label class="radio-pill">
+                  <input type="radio" name="gen-tier" value="Strong" checked>
+                  <span>Strong (2+ each)</span>
+                </label>
+                <label class="radio-pill">
+                  <input type="radio" name="gen-tier" value="High">
+                  <span>High (1+ each, 2+ in one)</span>
+                </label>
+              </div>
+            </div>
+
+            <button type="button" id="btn-generate-password" class="btn btn-primary btn-block">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+              Generate & Apply Password
+            </button>
+          </div>
+        </div>
+
+        <!-- Strength Tier Classification Matrix -->
+        <div class="card matrix-card">
+          <div class="matrix-header">
+            <h3>Strength Classification Matrix</h3>
+            <span class="matrix-spec-ref">OOPS Spec</span>
+          </div>
+          <div class="tier-list">
+            <div class="tier-item" id="tier-strong">
+              <div class="tier-bullet tier-strong-bullet"></div>
+              <div class="tier-info">
+                <div class="tier-title-row">
+                  <span class="tier-name">Strong</span>
+                  <span class="tier-req">2+ of each category</span>
+                </div>
+                <p class="tier-desc">Contains min 2 characters each (Upper, Lower, Digit, Special) + Policy 1 & 5 compliant.</p>
+              </div>
+            </div>
+
+            <div class="tier-item" id="tier-high">
+              <div class="tier-bullet tier-high-bullet"></div>
+              <div class="tier-info">
+                <div class="tier-title-row">
+                  <span class="tier-name">High</span>
+                  <span class="tier-req">1+ each &amp; 2+ in any</span>
+                </div>
+                <p class="tier-desc">Contains min 1 each and at least 2 of either upper, lower, digit, or special character.</p>
+              </div>
+            </div>
+
+            <div class="tier-item" id="tier-moderate">
+              <div class="tier-bullet tier-moderate-bullet"></div>
+              <div class="tier-info">
+                <div class="tier-title-row">
+                  <span class="tier-name">Moderate</span>
+                  <span class="tier-req">1+ of each</span>
+                </div>
+                <p class="tier-desc">Contains min 1 character each of upper, lower, digit, and special characters.</p>
+              </div>
+            </div>
+
+            <div class="tier-item" id="tier-weak">
+              <div class="tier-bullet tier-weak-bullet"></div>
+              <div class="tier-info">
+                <div class="tier-title-row">
+                  <span class="tier-name">Weak</span>
+                  <span class="tier-req">Non-compliant</span>
+                </div>
+                <p class="tier-desc">Missing min 1 character each, OR fails length (8-14) or contains forbidden words.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Python CLI Output Simulator -->
+        <div class="card terminal-card">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <span class="terminal-title">python Password_Policy_And_Strength.py</span>
+            <button id="btn-copy-terminal" class="terminal-copy-btn" title="Copy CLI Output">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+          </div>
+          <pre class="terminal-body" id="terminal-output"><code>Please Enter your password: Gradious@123
+All character requirements satisfied
+length_valid : True, PASS
+upp_count : 1, PASS
+low_count : 7, PASS
+dig_count : 3, PASS
+spec_count : 1, PASS
+Forbidden found : False, PASS
+Password_Valid : True, PASS
+Strength is High!</code></pre>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <p>Password Policy &amp; Strength Evaluation Engine</p>
+        <div class="footer-links">
+          <span class="footer-tag">Python 3.12 OOP Architecture</span>
+          <span class="footer-separator">•</span>
+          <span class="footer-tag">Pure Vanilla HTML/CSS/JS</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
